@@ -45,9 +45,8 @@ class Pageview extends Model
                 'newSession'   =>   $request->input('ns') == '1',
                 'unique'       =>   $request->input('u') == '1',
                 'bounce'       =>   $request->input('b') != '0',
-                'width'        =>   $request->input('vw'),
-                'height'       =>   $request->input('vh'),
                 'referer'      =>   parseReferrer($request->input('r')),
+                'user_agent'   =>   $request->userAgent(),
                 'duration'     =>   0,
                 'visited_at'    =>   now(),
             ]);
@@ -66,6 +65,16 @@ class Pageview extends Model
     public function isBounce() : bool
     {
         return $this->bounce;
+    }
+
+    public function hasReferer() : bool
+    {
+        return $this->referer != '';
+    }
+
+    public function parseReferer() : array
+    {
+        return [parseHost($this->referer), parse_url($this->referer, PHP_URL_PATH)];
     }
 
     public function minutesHavePassed(int $minutes) : bool

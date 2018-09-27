@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use App\Site;
 use App\Pageview;
+use App\PageStats;
 use App\SiteStats;
+use App\RefererStats;
 use Illuminate\Bus\Queueable;
 use Illuminated\Console\Mutex;
 use Illuminate\Queue\SerializesModels;
@@ -57,16 +59,22 @@ class CalculateStats implements ShouldQueue
 
     protected function computeStats()
     {
+        foreach ($this->getPageviews() as $pageview) {
+            SiteStats::process($pageview, $this->site);
+            PageStats::process($pageview, $this->site);
+
+            if ($pageview->hasReferer()) {
+                [$host, $path] = $pageview->parseReferer();
+                RefererStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id, 'host' => $host, 'path' => $path])->add($pageview);
+            }
+        }
         foreach ($this->getAvailableDates() as $date) {
-            SiteStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id])->generateStats();
-            PageStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id])->generateStats();
-            RefererStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id])->generateStats();
             DeviceStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id])->generateStats();
         }
     }
 
-    protected function getAvailableDates()
+    protected function getPageviews()
     {
-        return $this->site->views()->all()->only('date')->unique();
+        return $this->site->views()->all();
     }
 }

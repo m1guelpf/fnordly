@@ -149,9 +149,6 @@ function trackPageview(f) {
     u: data.pagesViewed.indexOf(path) == -1 ? 1 : 0,
     nv: data.isNewVisitor ? 1 : 0,
     ns: data.isNewSession ? 1 : 0,
-    vw: window.innerWidth,
-    vh: window.innerHeight,
-
   };
 
   let i = document.createElement('img');

@@ -23,7 +23,7 @@ class CreatePageStatsTable extends Migration
             $table->unsignedInteger('entries');
             $table->float('bounce_rate');
             $table->float('avg_duration');
-            $table->unsignedInteger('known_durations');
+            $table->unsignedInteger('known_durations')->default(0);
 
 
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');

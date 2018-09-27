@@ -23,8 +23,7 @@ class CreatePageviewsTable extends Migration
             $table->boolean('unique');
             $table->boolean('bounce');
             $table->string('referer');
-            $table->integer('width');
-            $table->integer('height');
+            $table->string('user_agent');
             $table->integer('duration');
             $table->timestamp('visited_at');
             $table->timestamps();
