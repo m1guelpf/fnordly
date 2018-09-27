@@ -53,9 +53,19 @@ class Pageview extends Model
             ]);
     }
 
-    public function isNewSession()
+    public function isNewSession() : bool
     {
         return $this->newSession;
+    }
+
+    public function isNewVisitor() : bool
+    {
+        return $this->newVisitor;
+    }
+
+    public function isBounce() : bool
+    {
+        return $this->bounce;
     }
 
     public function minutesHavePassed(int $minutes) : bool
@@ -66,5 +76,18 @@ class Pageview extends Model
     public function site()
     {
         return $this->belongsTo(Site::class);
+    }
+
+    /**
+     * Scope a query to only include real-time views.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRealtime($query)
+    {
+        return $query->where(function ($query) {
+            $query->where('duration', 0)->orWhere('bounce', true);
+        })->where('timestamp', '>', now()->addMinutes(-5)->timestamp);
     }
 }
