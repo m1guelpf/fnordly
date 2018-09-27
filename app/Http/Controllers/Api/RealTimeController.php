@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Pageview;
+use App\Model\Pageview;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 

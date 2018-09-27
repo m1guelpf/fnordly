@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use App\Site;
-use App\Pageview;
+use App\Models\Site;
+use App\Models\Pageview;
 
 trait IsStatsModel
 {

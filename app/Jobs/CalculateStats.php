@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Site;
-use App\Pageview;
-use App\PageStats;
-use App\SiteStats;
-use App\RefererStats;
+use App\Models\Site;
+use App\Models\Pageview;
+use App\Models\Stats\PageStats;
+use App\Models\Stats\SiteStats;
+use App\Models\Stats\RefererStats;
 use Illuminate\Bus\Queueable;
 use Illuminated\Console\Mutex;
 use Illuminate\Queue\SerializesModels;
@@ -62,14 +62,12 @@ class CalculateStats implements ShouldQueue
         foreach ($this->getPageviews() as $pageview) {
             SiteStats::process($pageview, $this->site);
             PageStats::process($pageview, $this->site);
+            DeviceStats::process($pageview, $this->site);
 
             if ($pageview->hasReferer()) {
                 [$host, $path] = $pageview->parseReferer();
                 RefererStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id, 'host' => $host, 'path' => $path])->add($pageview);
             }
-        }
-        foreach ($this->getAvailableDates() as $date) {
-            DeviceStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id])->generateStats();
         }
     }
 

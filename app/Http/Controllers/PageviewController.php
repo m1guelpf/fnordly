@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Site;
-use App\Pageview;
+use App\Models\Site;
+use App\Models\Pageview;
 use Illuminate\Http\Request;
 
 class PageviewController extends Controller

@@ -1,12 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models\Stats;
 
-use App\Site;
-use App\Pageview;
+use App\Models\Site;
+use App\Models\Pageview;
+use App\Traits\IsStatsModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\IsStatsModel;
 
 class RefererStats extends Model
 {
