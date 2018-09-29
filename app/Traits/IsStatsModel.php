@@ -49,7 +49,9 @@ trait IsStatsModel
 
     public function add(Pageview $pageview)
     {
-        $this->computeStatsFor($pageview)->save();
+        $this->computeStatsFor($pageview);
+
+        $this->save();
     }
 
     abstract protected function computeStatsFor(Pageview $pageview);

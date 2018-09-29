@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRefererStatsTable extends Migration
+class CreateDeviceStatsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,14 @@ class CreateRefererStatsTable extends Migration
      */
     public function up()
     {
-        Schema::create('referer_stats', function (Blueprint $table) {
+        Schema::create('device_stats', function (Blueprint $table) {
             $table->date('date')->index();
             $table->string('site_id');
             $table->unsignedInteger('pageviews');
-            $table->unsignedInteger('visitors');
-            $table->float('bounce_rate');
-            $table->float('avg_duration');
-            $table->unsignedInteger('known_durations')->default(0);
-            $table->string('group')->nullable();
-            $table->string('host');
-            $table->string('path');
-
+            $table->unsignedInteger('desktop');
+            $table->unsignedInteger('mobile');
+            $table->unsignedInteger('tablet');
+            $table->unsignedInteger('other');
 
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
@@ -37,6 +33,6 @@ class CreateRefererStatsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('referer_stats');
+        Schema::dropIfExists('device_stats');
     }
 }

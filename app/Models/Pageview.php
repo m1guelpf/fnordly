@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use WhichBrowser\Parser as UserAgent;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Pageview extends Model
 {
@@ -75,6 +76,11 @@ class Pageview extends Model
     public function parseReferer() : array
     {
         return [parseHost($this->referer), parse_url($this->referer, PHP_URL_PATH)];
+    }
+
+    public function getBrowser()
+    {
+        return new UserAgent($this->user_agent);
     }
 
     public function minutesHavePassed(int $minutes) : bool

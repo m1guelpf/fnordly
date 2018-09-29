@@ -4,11 +4,12 @@ namespace App\Jobs;
 
 use App\Models\Site;
 use App\Models\Pageview;
-use App\Models\Stats\PageStats;
-use App\Models\Stats\SiteStats;
-use App\Models\Stats\RefererStats;
 use Illuminate\Bus\Queueable;
 use Illuminated\Console\Mutex;
+use App\Models\Stats\PageStats;
+use App\Models\Stats\SiteStats;
+use App\Models\Stats\DeviceStats;
+use App\Models\Stats\RefererStats;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -40,19 +41,19 @@ class CalculateStats implements ShouldQueue
     {
         $mutex = new Mutex($this);
 
-        if (!$mutex->acquireLock($this->getMutexTimeout())) {
+        if (! $mutex->acquireLock($this->getMutexTimeout())) {
             $this->release(10);
         }
 
         try {
             $this->computeStats();
+
+            $site->views()->delete();
         } catch (\Throwable $t) {
             $this->releaseMutexLock();
 
             throw $t;
         }
-
-        $site->views()->delete();
 
         $this->releaseMutexLock();
     }
@@ -65,8 +66,7 @@ class CalculateStats implements ShouldQueue
             DeviceStats::process($pageview, $this->site);
 
             if ($pageview->hasReferer()) {
-                [$host, $path] = $pageview->parseReferer();
-                RefererStats::firstOrNew(['date' => $date, 'site_id' => $this->site->id, 'host' => $host, 'path' => $path])->add($pageview);
+                RefererStats::process($pageview, $this->site);
             }
         }
     }

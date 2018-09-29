@@ -12,6 +12,11 @@ class RefererStats extends Model
 {
     use IsStatsModel;
 
+    protected $groups = [
+        'Google' => '/www\.google\..*/m',
+        'Twitter' => '/t\.co/m'
+    ];
+
     public static function process(Pageview $pageview, Site $site)
     {
         [$host, $path] = $pageview->parseReferer();
@@ -21,6 +26,8 @@ class RefererStats extends Model
 
     protected function computeStatsFor(Pageview $pageview)
     {
+        $this->setGroup($pageview);
+
         $this->increment('pageviews');
 
         if ($pageview->isNewVisitor()) {
@@ -36,6 +43,15 @@ class RefererStats extends Model
         if ($pageview->duration > 0) {
             $this->increment('known_durations');
             $this->avg_duration = $this->avg_duration + (((float) $pageview->duration) - $this->avg_duration) * 1 / ((float) $this->known_durations);
+        }
+    }
+
+    protected function setGroup(Pageview $pageview)
+    {
+        foreach ($this->groups as $name => $regex) {
+            if (preg_match($regex, $pageview->host)) {
+                $this->group = $name;
+            }
         }
     }
 }
