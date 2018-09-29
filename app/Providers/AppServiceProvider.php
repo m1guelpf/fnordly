@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\Horizon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Model::unguard();
+
+        Horizon::auth(function (\Illuminate\Http\Request $request) {
+            return app()->environment('local') || (! is_null($request->user()) && $request->user()->email == 'soy@miguelpiedrafita.com');
+        });
     }
 
     /**
