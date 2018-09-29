@@ -77,9 +77,9 @@
                 };
                 d=f.createElement('script'),
                 l=f.getElementsByTagName('script')[0];
-                d.async=1; d.src=o; d.id='fnordly-script';
+                d.async=1; d.src=o;
                 l.parentNode.insertBefore(d,l)
-            })(document, window, '{{ asset('tracker.js') }}', 'fnordly');
+            })(document, window, '/tracker.js', 'fnordly');
 
             fnordly('23-ABCDEF', 'trackPageview');
         </script>

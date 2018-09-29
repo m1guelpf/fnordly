@@ -5,6 +5,7 @@ namespace App\Providers;
 use Laravel\Horizon\Horizon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
         Horizon::auth(function (\Illuminate\Http\Request $request) {
             return app()->environment('local') || (! is_null($request->user()) && $request->user()->email == 'soy@miguelpiedrafita.com');
         });
+
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 
     /**
